@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Replan</title>
+
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+<body>
+
+<div class="app">
+
+    <header class="header">
+        <h1>RE:PLAN</h1>
+    </header>
+
+    <main>
+
+        <section class="today">
+            <p>TODAY</p>
+            <h2>오늘의 기록</h2>
+        </section>
+
+        <section class="card">
+            <h3>오늘의 일기</h3>
+
+            <textarea
+                    id="diaryContent"
+                    placeholder="오늘 있었던 일과 느낀 점을 자유롭게 적어주세요.">
+            </textarea>
+
+            <button id="diaryButton">
+                등록 및 AI 분석
+            </button>
+
+            <div id="keywordResult"></div>
+        </section>
+
+
+        <section class="card">
+            <h3>Todo 등록</h3>
+
+            <input
+                    id="todoTitle"
+                    type="text"
+                    placeholder="할 일을 입력하세요">
+
+            <input
+                    id="todoDeadline"
+                    type="datetime-local">
+
+            <button id="todoButton">
+                Todo 등록 및 Ai 세부계획 생성
+            </button>
+
+            <div id="planResult"></div>
+        </section>
+
+    </main>
+
+</div>
+
+<script src="/js/app.js"></script>
+
+</body>
+</html>
