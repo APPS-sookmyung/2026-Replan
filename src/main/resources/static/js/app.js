@@ -29,9 +29,12 @@ todoButton.addEventListener("click", function () {
         + "&deadline=" + encodeURIComponent(deadline), {
         method: "POST"
     })
-        .then(function () {
-            return fetch("/todo/plan?title=" + encodeURIComponent(title)
-                + "&deadline=" + encodeURIComponent(deadline), {
+        .then(function (response) {
+            return response.json();
+        })
+        .then(function (todo) {
+
+            return fetch("/todo/" + todo.id + "/plan", {
                 method: "POST"
             });
         })

@@ -22,4 +22,9 @@ public class TodoService {
     public List<Todo> getAllTodos() {
         return todoRepository.findAll();
     }
+
+    public Todo getTodoById(Long id) {
+        return todoRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Todo를 찾을 수 없습니다."));
+    }
 }

@@ -1,8 +1,10 @@
 package com.yuan.replan.controller;
 
+import com.yuan.replan.dto.PlanResponse;
 import com.yuan.replan.entity.Todo;
 import com.yuan.replan.service.GeminiService;
 import com.yuan.replan.service.KeywordService;
+import com.yuan.replan.service.PlanService;
 import com.yuan.replan.service.TodoService;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
@@ -13,17 +15,22 @@ import java.util.List;
 @RestController
 @RequestMapping("/todo")
 public class TodoController {
+
     private final TodoService todoService;
     private final GeminiService geminiService;
     private final KeywordService keywordService;
+    private final PlanService planService;
 
     public TodoController(
             TodoService todoService,
             GeminiService geminiService,
-            KeywordService keywordService) {
+            KeywordService keywordService,
+            PlanService planService) {
+
         this.todoService = todoService;
         this.geminiService = geminiService;
         this.keywordService = keywordService;
+        this.planService = planService;
     }
 
     @PostMapping
@@ -40,13 +47,27 @@ public class TodoController {
         return todoService.getAllTodos();
     }
 
-    @PostMapping("/plan")
-    public String generatePlan(
-            @RequestParam String title,
-            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-            @RequestParam LocalDateTime deadline) {
+    @PostMapping("/{todoId}/plan")
+    public String generatePlan(@PathVariable Long todoId) {
+
+        Todo todo = todoService.getTodoById(todoId);
+
         String keywords = keywordService.getKeywordsAsString();
 
-        return geminiService.generatePlan(title, deadline, keywords);
+        String planJson = geminiService.generatePlan(
+                todo.getTitle(),
+                todo.getDeadline(),
+                keywords
+        );
+
+        planService.saveGeneratedPlan(todo, planJson);
+
+        return planJson;
+    }
+
+    @GetMapping("/{todoId}/plan")
+    public PlanResponse getPlan(@PathVariable Long todoId) {
+
+        return planService.getPlanResponse(todoId);
     }
 }

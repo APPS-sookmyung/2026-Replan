@@ -1,6 +1,7 @@
 package com.yuan.replan.service;
 
 import com.google.genai.Client;
+import com.google.genai.types.GenerateContentConfig;
 import com.google.genai.types.GenerateContentResponse;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -14,6 +15,8 @@ public class GeminiService {
     @Value("${gemini.api.key}")
     private String apiKey;
 
+
+    // 일기 분석 → 상태 키워드 추출
     public String analyzeDiary(String diary) {
 
         Client client = Client.builder()
@@ -40,6 +43,8 @@ public class GeminiService {
         return response.text();
     }
 
+
+    // Todo + 사용자 상태 → 개인화 계획 생성
     public String generatePlan(
             String title,
             LocalDateTime deadline,
@@ -65,18 +70,29 @@ public class GeminiService {
                         + "마감 시각: " + deadline + "\n"
                         + "남은 시간: 약 " + remainingHours + "시간\n"
                         + "사용자 상태 키워드: " + keywords + "\n\n"
+
                         + "요구사항:\n"
                         + "1. Todo를 마감 전까지 완료할 수 있도록 현실적인 세부 작업으로 나눠줘.\n"
-                        + "2. 각 세부 계획에는 시작 시각, 종료 시각, 예상 소요시간을 포함해줘.\n"
-                        + "3. 사용자의 현재 상태를 계획의 작업량과 휴식 배치에 반영해줘.\n"
-                        + "4. 마지막에 '계획 이유'를 2~3문장으로 작성하고, 어떤 사용자 상태를 어떻게 반영했는지 설명해줘.\n"
-                        + "5. 마감 직전에 일이 몰리지 않도록 분산해줘.";
+                        + "2. 사용자가 제공하지 않은 시험 범위, 과제 범위 등의 구체적인 내용을 임의로 만들어내지 마.\n"
+                        + "3. 사용자의 현재 상태를 작업량과 휴식 배치에 반영해줘.\n"
+                        + "4. 마감 직전에 일이 몰리지 않도록 분산해줘.\n"
+                        + "5. 전체 계획을 이렇게 구성한 이유를 reason에 2~3문장으로 작성해줘.\n"
+                        + "6. 반드시 JSON 형식으로만 응답해줘.\n"
+                        + "7. JSON은 reason과 items를 포함해야 해.\n"
+                        + "8. items의 각 항목에는 content, startTime, endTime, durationMinutes를 포함해줘.\n"
+                        + "9. startTime과 endTime은 현재 시각과 마감 시각을 기준으로 실제 계획 시각을 정해줘.\n"
+                        + "10. startTime과 endTime은 ISO 8601 형식으로 작성해줘.";
+
+        GenerateContentConfig config =
+                GenerateContentConfig.builder()
+                        .responseMimeType("application/json")
+                        .build();
 
         GenerateContentResponse response =
                 client.models.generateContent(
                         "gemini-3.6-flash",
                         prompt,
-                        null
+                        config
                 );
 
         return response.text();
