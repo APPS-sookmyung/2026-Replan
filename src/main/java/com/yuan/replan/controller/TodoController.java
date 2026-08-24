@@ -52,7 +52,7 @@ public class TodoController {
 
         Todo todo = todoService.getTodoById(todoId);
 
-        String keywords = keywordService.getKeywordsAsString();
+        String keywords = keywordService.getWeightedKeywordsAsString();
 
         String planJson = geminiService.generatePlan(
                 todo.getTitle(),

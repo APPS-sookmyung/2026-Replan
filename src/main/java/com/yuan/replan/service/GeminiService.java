@@ -69,7 +69,8 @@ public class GeminiService {
                         + "현재 시각: " + now + "\n"
                         + "마감 시각: " + deadline + "\n"
                         + "남은 시간: 약 " + remainingHours + "시간\n"
-                        + "사용자 상태 키워드: " + keywords + "\n\n"
+                        + "사용자 상태 키워드: " + keywords + "\n"
+                        + "키워드의 가중치는 최근성을 나타내며, 값이 높을수록 현재 계획에 더 중요하게 반영해줘.\n\n"
 
                         + "요구사항:\n"
                         + "1. Todo를 마감 전까지 완료할 수 있도록 현실적인 세부 작업으로 나눠줘.\n"
