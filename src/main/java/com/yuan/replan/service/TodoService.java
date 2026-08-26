@@ -9,13 +9,20 @@ import java.util.List;
 
 @Service
 public class TodoService {
+
     private final TodoRepository todoRepository;
+
     public TodoService(TodoRepository todoRepository) {
         this.todoRepository = todoRepository;
     }
 
-    public Todo saveTodo(String title, LocalDateTime deadline) {
-        Todo todo = new Todo(title, deadline);
+    public Todo saveTodo(
+            String title,
+            LocalDateTime deadline,
+            String additionalInfo) {
+
+        Todo todo = new Todo(title, deadline, additionalInfo);
+
         return todoRepository.save(todo);
     }
 
@@ -25,6 +32,7 @@ public class TodoService {
 
     public Todo getTodoById(Long id) {
         return todoRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Todo를 찾을 수 없습니다."));
+                .orElseThrow(() ->
+                        new IllegalArgumentException("Todo를 찾을 수 없습니다."));
     }
 }

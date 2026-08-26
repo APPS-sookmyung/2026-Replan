@@ -23,10 +23,13 @@ const todoButton = document.getElementById("todoButton");
 
 todoButton.addEventListener("click", function () {
     const title = document.getElementById("todoTitle").value;
+    const additionalInfo =
+        document.getElementById("todoAdditionalInfo").value;
     const deadline = document.getElementById("todoDeadline").value;
 
     fetch("/todo?title=" + encodeURIComponent(title)
-        + "&deadline=" + encodeURIComponent(deadline), {
+        + "&deadline=" + encodeURIComponent(deadline)
+        + "&additionalInfo=" + encodeURIComponent(additionalInfo), {
         method: "POST"
     })
         .then(function (response) {

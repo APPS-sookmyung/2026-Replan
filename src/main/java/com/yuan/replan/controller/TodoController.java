@@ -37,9 +37,10 @@ public class TodoController {
     public Todo saveTodo(
             @RequestParam String title,
             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-            @RequestParam LocalDateTime deadline) {
+            @RequestParam LocalDateTime deadline,
+            @RequestParam(required = false) String additionalInfo) {
 
-        return todoService.saveTodo(title, deadline);
+        return todoService.saveTodo(title, deadline, additionalInfo);
     }
 
     @GetMapping
@@ -57,6 +58,7 @@ public class TodoController {
         String planJson = geminiService.generatePlan(
                 todo.getTitle(),
                 todo.getDeadline(),
+                todo.getAdditionalInfo(),
                 keywords
         );
 

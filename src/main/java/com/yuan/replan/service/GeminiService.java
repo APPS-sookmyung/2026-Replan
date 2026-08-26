@@ -48,6 +48,7 @@ public class GeminiService {
     public String generatePlan(
             String title,
             LocalDateTime deadline,
+            String additionalInfo,
             String keywords) {
 
         Client client = Client.builder()
@@ -66,6 +67,11 @@ public class GeminiService {
         String prompt =
                 "사용자의 Todo와 현재 상태를 바탕으로 개인 맞춤형 세부 계획을 작성해줘.\n\n"
                         + "Todo: " + title + "\n"
+                        + "Todo 추가 정보: "
+                        + (additionalInfo == null || additionalInfo.isBlank()
+                        ? "제공되지 않음"
+                        : additionalInfo)
+                        + "\n"
                         + "현재 시각: " + now + "\n"
                         + "마감 시각: " + deadline + "\n"
                         + "남은 시간: 약 " + remainingHours + "시간\n"
@@ -78,11 +84,12 @@ public class GeminiService {
                         + "3. 사용자의 현재 상태를 작업량과 휴식 배치에 반영해줘.\n"
                         + "4. 마감 직전에 일이 몰리지 않도록 분산해줘.\n"
                         + "5. 전체 계획을 이렇게 구성한 이유를 reason에 2~3문장으로 작성해줘.\n"
-                        + "6. 반드시 JSON 형식으로만 응답해줘.\n"
-                        + "7. JSON은 reason과 items를 포함해야 해.\n"
-                        + "8. items의 각 항목에는 content, startTime, endTime, durationMinutes를 포함해줘.\n"
-                        + "9. startTime과 endTime은 현재 시각과 마감 시각을 기준으로 실제 계획 시각을 정해줘.\n"
-                        + "10. startTime과 endTime은 ISO 8601 형식으로 작성해줘.";
+                        + "6. Todo 추가 정보가 제공된 경우 해당 범위와 내용을 우선적으로 사용하고, 제공되지 않은 구체적인 범위나 내용을 임의로 만들어내지 마.\n"
+                        + "7. 반드시 JSON 형식으로만 응답해줘.\n"
+                        + "8. JSON은 reason과 items를 포함해야 해.\n"
+                        + "9. items의 각 항목에는 content, startTime, endTime, durationMinutes를 포함해줘.\n"
+                        + "10. startTime과 endTime은 현재 시각과 마감 시각을 기준으로 실제 계획 시각을 정해줘.\n"
+                        + "11. startTime과 endTime은 ISO 8601 형식으로 작성해줘.";
 
         GenerateContentConfig config =
                 GenerateContentConfig.builder()
