@@ -37,4 +37,8 @@ public class PlanItemService {
     public List<PlanItem> getPlanItems(Long planId) {
         return planItemRepository.findByPlanId(planId);
     }
+
+    public void deletePlanItems(Long planId) {
+        planItemRepository.deleteByPlanId(planId);
+    }
 }

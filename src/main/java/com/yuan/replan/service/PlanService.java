@@ -8,6 +8,7 @@ import com.yuan.replan.entity.PlanItem;
 import com.yuan.replan.entity.Todo;
 import com.yuan.replan.repository.PlanRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -86,5 +87,19 @@ public class PlanService {
                 plan.getReason(),
                 items
         );
+    }
+
+    public List<Plan> getAllPlans() {
+        return planRepository.findAll();
+    }
+
+    @Transactional
+    public void deletePlan(Long planId) {
+        if (!planRepository.existsById(planId)) {
+            throw new IllegalArgumentException("해당 계획을 찾을 수 없습니다.");
+        }
+
+        planItemService.deletePlanItems(planId);
+        planRepository.deleteById(planId);
     }
 }

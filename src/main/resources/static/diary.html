@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>RE:PLAN - 일기 작성</title>
+
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+<body>
+
+<div class="diary-page">
+
+    <header class="page-header">
+        <button
+                class="back-button"
+                onclick="location.href='/home.html'">
+            ←
+        </button>
+
+        <h1>일기 작성</h1>
+    </header>
+
+    <main class="diary-content">
+
+        <section class="diary-date">
+            <label>날짜</label>
+            <div id="diaryDate"></div>
+        </section>
+
+        <section class="diary-write">
+
+            <label for="diaryContent">
+                오늘의 일기
+            </label>
+
+            <textarea
+                    id="diaryContent"
+                    placeholder="오늘 있었던 일, 느낀 점, 감정 등을 자유롭게 적어주세요."></textarea>
+
+            <button id="diaryButton">
+                등록 및 AI 분석
+            </button>
+
+        </section>
+
+        <section
+                id="keywordSection"
+                class="keyword-section">
+
+            <h2>AI 분석 결과</h2>
+
+            <div id="keywordResult"></div>
+
+        </section>
+
+    </main>
+
+</div>
+
+<script src="/js/diary.js"></script>
+
+<script>
+    const today = new Date();
+
+    document.getElementById("diaryDate").textContent =
+        today.toLocaleDateString("ko-KR");
+</script>
+
+</body>
+</html>

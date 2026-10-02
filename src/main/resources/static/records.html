@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>RE:PLAN - 나의 기록</title>
+
+    <link rel="stylesheet" href="/css/style.css?v=4">
+</head>
+
+<body>
+
+<div class="records-page">
+
+    <header class="page-header">
+        <button
+                class="back-button"
+                onclick="location.href='/home.html'">
+            ←
+        </button>
+
+        <h1>나의 기록</h1>
+    </header>
+
+    <main class="records-content">
+
+        <div class="records-tabs">
+            <button
+                    id="diaryTab"
+                    class="record-tab active">
+                일기 기록
+            </button>
+
+            <button
+                    id="planTab"
+                    class="record-tab">
+                계획 기록
+            </button>
+        </div>
+
+        <section id="recordsResult">
+            <!-- 기록 목록이 여기에 들어갑니다 -->
+        </section>
+
+    </main>
+
+</div>
+
+<script src="/js/records.js?v=4"></script>
+
+</body>
+</html>

@@ -3,64 +3,38 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Replan</title>
+    <title>RE:PLAN</title>
 
     <link rel="stylesheet" href="/css/style.css">
 </head>
 
 <body>
 
-<div class="app">
+<div class="start-page">
 
-    <header class="header">
-        <h1>RE:PLAN</h1>
-    </header>
+    <div class="start-content">
 
-    <main>
+        <h1 class="start-logo">RE:PLAN</h1>
 
-        <section class="today">
-            <p>TODAY</p>
-            <h2>오늘의 기록</h2>
-        </section>
+        <p class="start-subtitle">
+            일기 기반 계획서 작성
+        </p>
 
-        <section class="card">
-            <h3>오늘의 일기</h3>
+        <p class="start-description">
+            매일의 일기를 AI가 분석하여<br>
+            당신의 상태를 파악하고,<br>
+            맞춤형 할 일 계획을 생성합니다.
+        </p>
 
-            <textarea
-                    id="diaryContent"
-                    placeholder="오늘 있었던 일과 느낀 점을 자유롭게 적어주세요.">
-            </textarea>
+        <button
+                class="start-button"
+                onclick="location.href='/home.html'">
+            시작하기 →
+        </button>
 
-            <button id="diaryButton">
-                등록 및 AI 분석
-            </button>
-
-            <div id="keywordResult"></div>
-        </section>
-
-
-        <section class="card">
-            <h3>Todo 등록</h3>
-
-            <input id="todoTitle" type="text" placeholder="할 일을 입력하세요">
-
-            <textarea
-                    id="todoAdditionalInfo"
-                    placeholder="추가 정보 (선택) - 범위, 현재 진행 상황 등을 입력하세요"
-            ></textarea>
-
-            <input id="todoDeadline" type="datetime-local">
-
-            <button id="todoButton">등록 및 AI 계획 생성</button>
-
-            <div id="planResult"></div>
-        </section>
-
-    </main>
+    </div>
 
 </div>
-
-<script src="/js/app.js"></script>
 
 </body>
 </html>
