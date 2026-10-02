@@ -35,6 +35,11 @@ public class DiaryController {
         return diaryService.getAllDiaries();
     }
 
+    @DeleteMapping("/{diaryId}")
+    public void deleteDiary(@PathVariable Long diaryId) {
+        diaryService.deleteDiary(diaryId);
+    }
+
     @PostMapping("/analyze")
     public String analyzeDiary(@RequestParam String content) {
         String keywords = geminiService.analyzeDiary(content);

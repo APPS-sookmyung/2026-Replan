@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>RE:PLAN - 홈</title>
+
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+<body>
+
+<div class="home-page">
+
+    <header class="home-header">
+        <h1>RE:PLAN</h1>
+    </header>
+
+    <main class="home-content">
+
+        <section class="today-section">
+            <p>TODAY</p>
+            <h2 id="todayDate"></h2>
+        </section>
+
+        <section class="home-menu">
+
+            <button
+                    class="home-menu-button"
+                    onclick="location.href='/diary.html'">
+
+                <strong>일기 작성</strong>
+                <span>오늘의 상태를 기록하고 분석해보세요.</span>
+
+            </button>
+
+            <button
+                    class="home-menu-button"
+                    onclick="location.href='/todo.html'">
+
+                <strong>Todo 등록</strong>
+                <span>최근 기록을 바탕으로 계획을 만들어보세요.</span>
+
+            </button>
+
+            <button
+                    class="home-menu-button"
+                    onclick="location.href='/records.html'">
+
+                <strong>나의 기록</strong>
+                <span>저장된 일기와 계획을 확인해보세요.</span>
+
+            </button>
+
+        </section>
+
+    </main>
+
+</div>
+
+
+<script>
+    const today = new Date();
+
+    document.getElementById("todayDate").textContent =
+        today.toLocaleDateString("ko-KR", {
+            year: "numeric",
+            month: "long",
+            day: "numeric",
+            weekday: "long"
+        });
+</script>
+
+</body>
+</html>

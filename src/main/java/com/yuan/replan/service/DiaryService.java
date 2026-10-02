@@ -21,6 +21,14 @@ public class DiaryService {
     }
 
     public List<Diary> getAllDiaries() {
-        return diaryRepository.findAll();
+        return diaryRepository.findAllByOrderByCreatedAtDescIdDesc();
+    }
+
+    public void deleteDiary(Long diaryId) {
+        if (!diaryRepository.existsById(diaryId)) {
+            throw new IllegalArgumentException("해당 일기를 찾을 수 없습니다.");
+        }
+
+        diaryRepository.deleteById(diaryId);
     }
 }
