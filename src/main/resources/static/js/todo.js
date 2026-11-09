@@ -1,29 +1,46 @@
 const todoButton = document.getElementById("todoButton");
 
 todoButton.addEventListener("click", function () {
+    if (todoButton.disabled) return;
+
     const title = document.getElementById("todoTitle").value;
     const additionalInfo =
         document.getElementById("todoAdditionalInfo").value;
     const deadline = document.getElementById("todoDeadline").value;
+    const originalText = todoButton.textContent;
 
-    fetch("/todo?title=" + encodeURIComponent(title)
+    todoButton.disabled = true;
+    todoButton.textContent = "계획 생성 중...";
+    todoButton.setAttribute("aria-busy", "true");
+
+    apiFetch("/todo?title=" + encodeURIComponent(title)
         + "&deadline=" + encodeURIComponent(deadline)
         + "&additionalInfo=" + encodeURIComponent(additionalInfo), {
         method: "POST"
     })
         .then(function (response) {
+            if (!response.ok) throw new Error("할 일 저장에 실패했어요.");
             return response.json();
         })
         .then(function (todo) {
-            return fetch("/todo/" + todo.id + "/plan", {
+            return apiFetch("/todo/" + todo.id + "/plan", {
                 method: "POST"
             });
         })
         .then(function (response) {
+            if (!response.ok) throw new Error("계획 생성에 실패했어요.");
             return response.json();
         })
         .then(function (plan) {
             displayPlan(plan);
+        })
+        .catch(function (error) {
+            alert("요청을 완료하지 못했어요. " + error.message);
+        })
+        .finally(function () {
+            todoButton.disabled = false;
+            todoButton.textContent = originalText;
+            todoButton.removeAttribute("aria-busy");
         });
 });
 

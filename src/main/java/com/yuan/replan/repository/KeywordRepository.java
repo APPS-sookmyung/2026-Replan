@@ -4,4 +4,5 @@ import com.yuan.replan.entity.Keyword;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface KeywordRepository extends JpaRepository<Keyword, Long> {
+    java.util.List<Keyword> findAllByUserId(Long userId);
 }

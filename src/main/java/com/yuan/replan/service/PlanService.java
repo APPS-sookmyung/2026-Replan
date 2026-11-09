@@ -8,6 +8,8 @@ import com.yuan.replan.entity.PlanItem;
 import com.yuan.replan.entity.Todo;
 import com.yuan.replan.repository.PlanRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.server.ResponseStatusException;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
@@ -15,6 +17,7 @@ import java.util.List;
 
 @Service
 public class PlanService {
+    private final CurrentUser currentUser;
 
     private final PlanRepository planRepository;
     private final PlanItemService planItemService;
@@ -22,13 +25,23 @@ public class PlanService {
 
     public PlanService(
             PlanRepository planRepository,
-            PlanItemService planItemService) {
+            PlanItemService planItemService, CurrentUser currentUser) {
 
+        this.currentUser = currentUser;
         this.planRepository = planRepository;
         this.planItemService = planItemService;
     }
 
+    @Transactional
     public Plan saveGeneratedPlan(Todo todo, String json) {
+        if (todo.getUser() == null || !currentUser.id().equals(todo.getUser().getId())) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        }
+        planRepository.findByTodoIdAndTodoUserId(todo.getId(), currentUser.id()).ifPresent(existing -> {
+            planItemService.deletePlanItems(existing.getId());
+            planRepository.delete(existing);
+            planRepository.flush();
+        });
 
         try {
             JsonNode root = objectMapper.readTree(json);
@@ -71,9 +84,9 @@ public class PlanService {
     }
 
     public Plan getPlanByTodoId(Long todoId) {
-        return planRepository.findByTodoId(todoId)
+        return planRepository.findByTodoIdAndTodoUserId(todoId, currentUser.id())
                 .orElseThrow(() ->
-                        new IllegalArgumentException("해당 Todo의 계획을 찾을 수 없습니다."));
+                        new ResponseStatusException(HttpStatus.NOT_FOUND));
     }
 
     public PlanResponse getPlanResponse(Long todoId) {
@@ -90,16 +103,14 @@ public class PlanService {
     }
 
     public List<Plan> getAllPlans() {
-        return planRepository.findAll();
+        return planRepository.findAllByTodoUserId(currentUser.id());
     }
 
     @Transactional
     public void deletePlan(Long planId) {
-        if (!planRepository.existsById(planId)) {
-            throw new IllegalArgumentException("해당 계획을 찾을 수 없습니다.");
-        }
-
+        Plan plan = planRepository.findByIdAndTodoUserId(planId, currentUser.id())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
         planItemService.deletePlanItems(planId);
-        planRepository.deleteById(planId);
+        planRepository.delete(plan);
     }
 }

@@ -29,7 +29,7 @@ planTab.addEventListener("click", function () {
 
 function loadDiaries() {
 
-    fetch("/diary")
+    apiFetch("/diary")
         .then(function (response) {
             return response.json();
         })
@@ -96,7 +96,7 @@ function deleteDiary(diaryId, diaryCard) {
         return;
     }
 
-    fetch("/diary/" + diaryId, {
+    apiFetch("/diary/" + diaryId, {
         method: "DELETE"
     })
         .then(function (response) {
@@ -120,7 +120,7 @@ function deleteDiary(diaryId, diaryCard) {
 
 function loadPlans() {
 
-    fetch("/plans")
+    apiFetch("/plans")
         .then(function (response) {
             return response.json();
         })
@@ -199,7 +199,7 @@ function togglePlanDetail(todoId, detail) {
     detail.textContent = "계획을 불러오는 중입니다.";
     detail.style.display = "block";
 
-    fetch("/todo/" + todoId + "/plan")
+    apiFetch("/todo/" + todoId + "/plan")
         .then(function (response) {
             if (!response.ok) {
                 throw new Error("계획을 불러오지 못했습니다.");
@@ -255,7 +255,7 @@ function deletePlan(planId, planCard) {
         return;
     }
 
-    fetch("/plans/" + planId, {
+    apiFetch("/plans/" + planId, {
         method: "DELETE"
     })
         .then(function (response) {
