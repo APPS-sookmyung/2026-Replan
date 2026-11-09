@@ -156,3 +156,9 @@ button {
     display: block;
     margin-bottom: 8px;
 }
+#diaryButton:disabled,
+#todoButton:disabled {
+    opacity: 0.6;
+    cursor: wait;
+}
+

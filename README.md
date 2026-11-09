@@ -24,6 +24,7 @@ RE:PLAN은 일기를 저장하고, Gemini로 일기 내용을 분석한 뒤, 사
 - Spring Data JPA
 - MySQL
 - Google GenAI Java SDK
+- Spring Security OAuth2 / OIDC (Google, HTTP 세션)
 - Gradle
 - HTML, CSS, JavaScript
 
@@ -75,9 +76,19 @@ CREATE DATABASE replan_db;
 $env:REPLAN_DB_USERNAME="MySQL_사용자명"
 $env:REPLAN_DB_PASSWORD="MySQL_비밀번호"
 $env:REPLAN_GEMINI_API_KEY="Gemini_API_키"
+$env:GOOGLE_CLIENT_ID="Google_OAuth_Client_ID"
+$env:GOOGLE_CLIENT_SECRET="Google_OAuth_Client_Secret"
 ```
 
 ## 실행 방법
+Google Cloud Console에서 웹 애플리케이션 OAuth 클라이언트를 만들고 승인된 리디렉션 URI에
+`http://localhost:8080/login/oauth2/code/google`을 등록합니다. 배포 시에는 실제 HTTPS 도메인을 사용합니다.
+동의 화면이 테스트 상태이면 로그인할 계정을 테스트 사용자에 등록합니다.
+
+IDE 실행 구성 또는 실행 프로세스에 위 환경변수를 전달한 후 `./gradlew.bat bootRun`으로 실행합니다.
+`.env` 파일은 Spring Boot가 자동으로 읽지 않습니다. 실제 키나 비밀번호를 코드, 문서, 실행 구성 파일에 커밋하지 마세요.
+기존 `.gitignore`의 `.env*`, `application-local.properties`, `application-local.yml` 제외 설정을 유지합니다.
+
 브라우저에서 아래 주소로 접속합니다.
 
 ```text
@@ -106,5 +117,43 @@ GET /todo/{todoId}/plan
 GET /plans
 DELETE /plans/{planId}
 ```
+
+모든 기록 API는 로그인한 세션이 필요합니다. 비로그인 API 요청은 401, 소유하지 않은 ID는 404,
+CSRF 토큰이 없는 변경 요청은 403을 반환합니다. 개인 화면은 비로그인 시 시작 화면으로 이동합니다.
+로그인은 `/oauth2/authorization/google`, 성공 후 이동은 `/home.html`입니다.
+로그아웃은 CSRF 토큰을 포함한 `POST /logout`으로 세션을 무효화합니다.
+Google 계정 자체의 로그아웃은 수행하지 않습니다.
+
+프론트엔드 공통 `auth.js`의 `apiFetch`는 변경 요청 전 `GET /api/csrf`로 토큰을 받은 뒤
+응답의 `headerName`과 `token`을 헤더에 넣습니다. 직접 API를 호출할 때도 동일 세션 쿠키와 토큰이 필요합니다.
+
+## 기존 데이터 보존
+
+MySQL 연결 및 Gemini 설정은 유지합니다. 기존 `ddl-auto=update` 설정으로 `app_user` 테이블과
+`diary`, `keyword`, `todo`의 nullable `user_id` 외래 키를 추가합니다. 테이블 삭제나 초기화 코드는 없습니다.
+계획의 소유자는 `Plan → Todo → User`, 세부 항목의 소유자는 `PlanItem → Plan → Todo → User`로 확인합니다.
+기존 소유자 없는 데이터는 보존하지만 어느 사용자에게도 표시하지 않습니다. 과거 기록을 사용하려면
+운영자가 실제 소유자를 확인한 후 해당 데이터의 `user_id`를 별도로 연결해야 합니다.
+
+## 검증
+
+`./gradlew.bat test`는 테스트 전용 H2 메모리 DB와 Gemini 모의 응답을 사용합니다.
+`src/test/resources/application.properties`의 `create-drop`은 테스트 DB에만 적용됩니다.
+실제 MySQL과 외부 Google/Gemini API를 테스트에서 호출하지 않습니다.
+
+자동 테스트는 비로그인 차단, CSRF 토큰 발급 및 세션 요청, 로그아웃 세션 폐기, Google sub 재사용,
+사용자별 일기·Todo·계획 조회, 타인 데이터 조회·삭제·AI 계획 생성 차단, 사용자별 키워드 입력,
+일기 분석 및 Todo 저장, 계획 재생성과 세부 항목 삭제를 확인합니다.
+
+실제 연동은 다음 순서로 확인하세요.
+
+1. 환경변수를 설정하고 실행한 뒤 Google 로그인 버튼을 누릅니다. 로그인 성공 시 `home.html`로 이동하는지 확인합니다.
+2. A 계정으로 일기를 저장·분석하고 Todo와 AI 계획을 생성합니다. 기록 화면의 목록·펼치기·삭제를 확인합니다.
+3. 로그아웃 후 개인 화면과 API에 접근할 수 없는지 확인합니다. 같은 계정으로 다시 로그인해 `app_user`의 ID가 유지되는지 확인합니다.
+4. 별도 브라우저 또는 시크릿 창에서 B 계정으로 로그인해 A의 기록이 보이지 않는지 확인합니다.
+5. B 세션으로 A의 일기·계획 삭제 및 Todo 계획 조회·생성 URL을 호출하면 404인지 확인합니다. 변경 요청에는 B의 CSRF 토큰을 사용해야 합니다.
+6. 개발자 도구에서 POST/DELETE에 CSRF 헤더가 붙는지 확인하고, 헤더 없이 재전송하면 403인지 확인합니다.
+
+Google 실제 동의·콜백과 Gemini 실제 응답, 기존 MySQL 스키마에 대한 적용은 위 수동 검증이 필요합니다.
 
 

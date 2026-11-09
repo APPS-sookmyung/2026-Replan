@@ -11,10 +11,12 @@ import java.util.stream.Collectors;
 
 @Service
 public class KeywordService {
+    private final CurrentUser currentUser;
 
     private final KeywordRepository keywordRepository;
 
-    public KeywordService(KeywordRepository keywordRepository) {
+    public KeywordService(KeywordRepository keywordRepository, CurrentUser currentUser) {
+        this.currentUser = currentUser;
         this.keywordRepository = keywordRepository;
     }
 
@@ -24,16 +26,17 @@ public class KeywordService {
 
         for (String keyword : keywordArray) {
             Keyword newKeyword = new Keyword(keyword.trim());
+            newKeyword.setUser(currentUser.get());
             keywordRepository.save(newKeyword);
         }
     }
 
     public List<Keyword> getAllKeywords() {
-        return keywordRepository.findAll();
+        return keywordRepository.findAllByUserId(currentUser.id());
     }
 
     public String getKeywordsAsString() {
-        List<Keyword> keywords = keywordRepository.findAll();
+        List<Keyword> keywords = keywordRepository.findAllByUserId(currentUser.id());
         return keywords.stream()
                 .map(Keyword::getName)
                 .collect(Collectors.joining(", "));
@@ -42,7 +45,7 @@ public class KeywordService {
 
     public String getWeightedKeywordsAsString() {
 
-        List<Keyword> keywords = keywordRepository.findAll();
+        List<Keyword> keywords = keywordRepository.findAllByUserId(currentUser.id());
 
         return keywords.stream()
                 .map(keyword -> {
