@@ -96,6 +96,39 @@ http://localhost:8080
 ```
 
 
+## 배포 (Render + TiDB)
+
+Render에서 GitHub 저장소를 연결해 **Web Service → Docker → Free**로 생성합니다.
+루트 `Dockerfile`이 Gradle Wrapper 9.5.1로 실행 JAR를 빌드하고 Java 17에서 실행합니다.
+Docker Command는 비워두고, 헬스 체크 경로는 `/index.html`을 사용합니다.
+
+Render에 아래 환경변수를 등록합니다. 실제 비밀값은 파일에 저장하지 않습니다.
+
+| 환경변수 | 설정값 |
+| --- | --- |
+| `SPRING_PROFILES_ACTIVE` | `render` |
+| `SPRING_DATASOURCE_URL` | `jdbc:mysql://<HOST>:<PORT>/replan_db?sslMode=VERIFY_IDENTITY` |
+| `SPRING_DATASOURCE_USERNAME` | TiDB 사용자명 |
+| `SPRING_DATASOURCE_PASSWORD` | TiDB 비밀번호 |
+| `REPLAN_GEMINI_API_KEY` | 기존 Gemini API 키 |
+| `GOOGLE_CLIENT_ID` | 기존 Google OAuth Client ID |
+| `GOOGLE_CLIENT_SECRET` | 기존 Google OAuth Client Secret |
+
+`PORT`는 Render가 제공합니다. 로컬에서는 `render` 프로필 없이 기존 MySQL 설정과 기본 포트 8080을 사용합니다.
+미리 생성한 빈 `replan_db`에는 기존 `ddl-auto=update` 설정으로 최초 실행 시 테이블이 생성됩니다.
+DB 계정에는 테이블·인덱스·제약조건 생성 및 변경 권한이 필요하며, 로컬 데이터는 자동 이전되지 않습니다.
+
+Google Cloud의 승인된 리디렉션 URI에 다음 주소를 추가합니다.
+
+```text
+https://<서비스명>.onrender.com/login/oauth2/code/google
+```
+
+`render` 프로필은 HTTPS 프록시 헤더와 Secure 세션 쿠키를 적용합니다.
+실제 로그인·데이터 저장·Gemini·사용자별 접근 분리는 배포된 HTTPS 주소에서 확인합니다.
+재배포·재시작 시 다시 로그인해야 하며, Render 무료 서버는 미사용 시 절전 상태가 됩니다.
+빌드 확인은 `./gradlew.bat test bootJar`, Docker 빌드는 `docker build -t replan .`로 실행합니다.
+
 ## 주요 API
 
 ### 일기
