@@ -1,11 +1,19 @@
+* {
+    box-sizing: border-box;
+}
+
 body {
     margin: 0;
-    background-color: #f5f5f5;
-    font-family: Arial, sans-serif;
+    background-color: #f6f9f6;
+    color: #26352c;
+    font-family: Arial, "Malgun Gothic", sans-serif;
+    font-size: 15px;
+    line-height: 1.65;
+    overflow-wrap: anywhere;
 }
 
 .app {
-    width: 500px;
+    width: min(960px, calc(100% - 48px));
     margin: 40px auto;
 }
 
@@ -48,19 +56,55 @@ body {
 textarea,
 input {
     width: 100%;
-    padding: 10px;
-    margin-bottom: 10px;
+    padding: 12px 14px;
+    margin-bottom: 20px;
     box-sizing: border-box;
+    min-width: 0;
+    border: 1px solid #c8d5cb;
+    border-radius: 8px;
+    background: #fff;
+    color: #26352c;
+    font: inherit;
+    line-height: 1.6;
 }
 
 textarea {
-    height: 120px;
+    height: 160px;
+    min-height: 120px;
     resize: vertical;
 }
 
 button {
-    padding: 10px 15px;
+    min-height: 44px;
+    max-width: 100%;
+    padding: 10px 18px;
+    border: 1px solid #486b52;
+    border-radius: 8px;
+    background: #486b52;
+    color: #fff;
+    font: inherit;
+    font-weight: 600;
+    line-height: 1.5;
     cursor: pointer;
+    transition: background-color 150ms ease, border-color 150ms ease;
+}
+
+button:hover:not(:disabled) {
+    background: #395740;
+    border-color: #395740;
+}
+
+button:focus-visible,
+input:focus-visible,
+textarea:focus-visible {
+    outline: 2px solid #486b52;
+    outline-offset: 3px;
+}
+
+input::placeholder,
+textarea::placeholder {
+    color: #68786d;
+    opacity: 1;
 }
 
 #planResult {
@@ -69,31 +113,41 @@ button {
 }
 
 .records-page {
-    max-width: 700px;
+    width: min(960px, calc(100% - 48px));
     margin: 0 auto;
-    padding: 24px;
+    padding: 32px 0 48px;
 }
 
 .records-content {
-    margin-top: 30px;
+    margin-top: 24px;
 }
 
 .records-tabs {
     display: flex;
+    flex-wrap: wrap;
     gap: 10px;
-    margin-bottom: 30px;
+    margin-bottom: 24px;
 }
 
 .record-tab {
     padding: 12px 20px;
-    border: 1px solid #ccc;
-    border-radius: 10px;
+    border: 1px solid #c8d5cb;
+    border-radius: 8px;
     background: white;
+    color: #486b52;
     cursor: pointer;
 }
 
 .record-tab.active {
     font-weight: bold;
+    background: #486b52;
+    border-color: #486b52;
+    color: #fff;
+}
+
+.record-tab:hover:not(:disabled) {
+    background: #eaf1eb;
+    color: #26352c;
 }
 
 #recordsResult {
@@ -106,18 +160,25 @@ button {
     position: relative;
     padding: 20px;
     padding-right: 72px;
-    border: 1px solid #ddd;
-    border-radius: 16px;
+    border: 1px solid #dce5de;
+    border-radius: 10px;
     background: white;
 }
 
 .record-card p {
     margin: 0;
     line-height: 1.6;
+    white-space: pre-wrap;
+}
+
+.record-card p + p {
+    margin-top: 8px;
 }
 
 .record-card h3 {
     margin-top: 0;
+    margin-bottom: 12px;
+    font-size: 17px;
 }
 
 .record-delete-button {
@@ -125,17 +186,23 @@ button {
     top: 16px;
     right: 16px;
     padding: 6px 10px;
-    border: 1px solid #d6d6d6;
+    border: 1px solid #c8d5cb;
     border-radius: 8px;
     background: white;
-    color: #b3261e;
+    color: #52665a;
     font-size: 12px;
+    min-height: 32px;
+}
+
+.record-delete-button:hover:not(:disabled) {
+    background: #eaf1eb;
+    color: #26352c;
 }
 
 .plan-record-detail {
     margin-top: 18px;
     padding-top: 16px;
-    border-top: 1px solid #e4e4e4;
+    border-top: 1px solid #dce5de;
     cursor: default;
 }
 
@@ -147,9 +214,9 @@ button {
 
 .plan-record-item {
     padding: 14px;
-    border: 1px solid #e0e0e0;
+    border: 1px solid #dce5de;
     border-radius: 10px;
-    background: #fafafa;
+    background: #f6f9f6;
 }
 
 .plan-record-item strong {
@@ -160,5 +227,245 @@ button {
 #todoButton:disabled {
     opacity: 0.6;
     cursor: wait;
+}
+
+/* Shared page layout; existing markup and event hooks stay unchanged. */
+.home-page,
+.diary-page,
+.todo-page {
+    width: min(960px, calc(100% - 48px));
+    margin: 0 auto;
+    padding: 32px 0 48px;
+}
+
+.home-header,
+.page-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid #dce5de;
+}
+
+.home-header {
+    justify-content: space-between;
+}
+
+.home-header h1,
+.page-header h1 {
+    margin: 0;
+    color: #486b52;
+    font-size: 24px;
+    line-height: 1.4;
+}
+
+#logoutButton,
+.back-button {
+    flex-shrink: 0;
+    border-color: #c8d5cb;
+    background: #fff;
+    color: #486b52;
+}
+
+#logoutButton:hover:not(:disabled),
+.back-button:hover:not(:disabled) {
+    background: #eaf1eb;
+}
+
+.today-section {
+    margin: 28px 0 24px;
+}
+
+.today-section p {
+    margin: 0 0 4px;
+    color: #5e7063;
+    font-size: 13px;
+    letter-spacing: 0.06em;
+}
+
+.today-section h2 {
+    margin: 0;
+    font-size: 22px;
+    line-height: 1.5;
+}
+
+.home-menu {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 16px;
+}
+
+.home-menu-button {
+    min-width: 0;
+    padding: 24px;
+    border-color: #dce5de;
+    background: #fff;
+    color: #26352c;
+    text-align: left;
+}
+
+.home-menu-button:hover:not(:disabled) {
+    background: #eaf1eb;
+    border-color: #9ab19f;
+}
+
+.home-menu-button strong,
+.home-menu-button span {
+    display: block;
+}
+
+.home-menu-button strong {
+    margin-bottom: 8px;
+    color: #486b52;
+    font-size: 18px;
+}
+
+.home-menu-button span {
+    color: #5e7063;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 1.7;
+}
+
+.diary-content,
+.todo-content {
+    display: grid;
+    gap: 24px;
+    margin-top: 24px;
+}
+
+.diary-date {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 8px 16px;
+    color: #5e7063;
+}
+
+.diary-write,
+.todo-write,
+.keyword-section,
+.plan-section {
+    min-width: 0;
+    padding: 24px;
+    border: 1px solid #dce5de;
+    border-radius: 10px;
+    background: #fff;
+}
+
+.diary-write label,
+.todo-write label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+}
+
+#diaryContent {
+    height: 240px;
+}
+
+.keyword-section h2,
+.plan-section h2 {
+    margin: 0 0 16px;
+    font-size: 20px;
+    line-height: 1.5;
+}
+
+#keywordResult {
+    white-space: pre-wrap;
+}
+
+#planResult h3,
+#planResult h4 {
+    margin: 0 0 8px;
+    font-size: 16px;
+}
+
+#planResult p {
+    margin: 0 0 12px;
+}
+
+.plan-item {
+    margin-top: 16px;
+    padding: 16px;
+    border: 1px solid #dce5de;
+    border-radius: 8px;
+    background: #f6f9f6;
+}
+
+.plan-item p:last-child {
+    margin-bottom: 0;
+}
+
+.start-page {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    min-height: 100svh;
+    padding: 32px 24px;
+    text-align: center;
+}
+
+.start-content {
+    width: 100%;
+    max-width: 480px;
+}
+
+.start-logo {
+    margin: 0 0 16px;
+    color: #486b52;
+    font-size: 36px;
+    line-height: 1.3;
+}
+
+.start-subtitle {
+    margin: 0 0 12px;
+    font-size: 20px;
+    font-weight: 600;
+}
+
+.start-description {
+    margin: 0 0 28px;
+    color: #5e7063;
+    line-height: 1.8;
+}
+
+.start-button {
+    width: 100%;
+    max-width: 280px;
+}
+
+@media (max-width: 760px) {
+    .home-menu {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 480px) {
+    .home-page,
+    .diary-page,
+    .todo-page,
+    .records-page {
+        width: calc(100% - 32px);
+        padding-top: 20px;
+    }
+
+    .diary-write,
+    .todo-write,
+    .keyword-section,
+    .plan-section {
+        padding: 16px;
+    }
+
+    .home-header h1,
+    .page-header h1 {
+        font-size: 22px;
+    }
+
+    #diaryButton,
+    #todoButton {
+        width: 100%;
+    }
 }
 
